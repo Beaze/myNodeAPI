@@ -18,12 +18,13 @@ var customerSchema = new Schema({
 	name: { type: String, required: true},
 	tel: { type: String, required: true},
 	type: { type: String, enum: ctype},
-	title: String,
+	title: { type:String, required: true},
 	responder: { type: String, required: true },//被访者
 	company: String,
 	description: String,
 	images: [Images],
-	time: { type: Date, required: true},
+	onset: { type: Date, required: true},
+	conclude: {type: Date, required: true},
 	inviteurl: String
 });
 
