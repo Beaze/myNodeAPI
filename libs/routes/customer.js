@@ -6,10 +6,10 @@ var libs = process.cwd() + '/libs/';
 var log = require(libs + 'log')(module);
 
 var db = require(libs + 'db/mongoose');
-var Customer = require(libs + 'model/Customer');
+var Customer = require(libs + 'model/customer');
 
-router.get('/', passport.authenticate('bearer', { session: false }), function(req, res) {
-
+// router.get('/', passport.authenticate('bearer', { session: false }), function(req, res) {
+router.get('/', function(req, res) {
 	Customer.find(function (err, Customers) {
 		if (!err) {
 			return res.json(Customers);
@@ -25,7 +25,7 @@ router.get('/', passport.authenticate('bearer', { session: false }), function(re
 	});
 });
 
-router.post('/', passport.authenticate('bearer', { session: false }), function(req, res) {
+router.post('/', function(req, res) {
 
 	var Customer = new Customer({
 		title: req.body.title,
@@ -60,7 +60,7 @@ router.post('/', passport.authenticate('bearer', { session: false }), function(r
 	});
 });
 
-router.get('/:id', passport.authenticate('bearer', { session: false }), function(req, res) {
+router.get('/:id', function(req, res) {
 
 	Customer.findById(req.params.id, function (err, Customer) {
 
@@ -88,7 +88,7 @@ router.get('/:id', passport.authenticate('bearer', { session: false }), function
 	});
 });
 
-router.put('/:id', passport.authenticate('bearer', { session: false }), function (req, res){
+router.put('/:id', function (req, res){
 	var CustomerId = req.params.id;
 
 	Customer.findById(CustomerId, function (err, Customer) {

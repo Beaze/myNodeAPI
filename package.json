@@ -22,7 +22,8 @@
     "passport-http-bearer": "^1.0.x",
     "passport-oauth2-client-password": "^0.1.x",
     "socket.io": "^1.7.3",
-    "winston": "^0.8.x"
+    "winston": "^0.8.x",
+    "ws": "^2.2.0"
   },
   "jshintConfig": {
     "curly": true,
