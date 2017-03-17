@@ -28,8 +28,8 @@ router.get('/', function(req, res) {
 router.post('/', function(req, res) {
 
 	var Customer = new Customer({
-		title: req.body.title,
-		author: req.body.author,
+		name: req.body.name,
+		tel: req.body.tel,
 		description: req.body.description,
 		images: req.body.images
 	});
