@@ -6,18 +6,32 @@ var config = require(libs + 'config');
 var log = require(libs + 'log')(module);
 var app = require(libs + 'app');
 
+var io =
+
 app.set('port', process.env.PORT || config.get('port') || 3000);
 
 //  HTTPS
 var https = require('https');
 var fs = require('fs');
-var options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/wxapp.kaytion.com/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/wxapp.kaytion.com/fullchain.pem')
-}
+// var options = {
+//     key: fs.readFileSync('/etc/letsencrypt/live/wxapp.kaytion.com/privkey.pem'),
+//     cert: fs.readFileSync('/etc/letsencrypt/live/wxapp.kaytion.com/fullchain.pem')
+// }
+// var server =  https.createServer(options, app).listen(app.get('port'), function() {
 
-// var server = https.createServer(options, app);
-var server =  https.createServer(options, app).listen(app.get('port'), function() {
+var httpsServer = app.listen(1337, function() {
   debug('Express server listening on port ' + app.get('port'));
   log.info('Express server listening on port ' + app.get('port'));
+});
+
+var WebsocketServer = require('ws').Server;
+var wss = new WebsocketServer({
+  server: httpsServer
+});
+
+wss.on('connection', function connection(ws) {
+  ws.on('message', function incoming(message) {
+    console.log('received: %s', message);
+  });
+  ws.send('open_the_door');
 });
