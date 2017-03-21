@@ -29,8 +29,8 @@ router.post('/', function(req, res) {
 
 	var Customer = new Customer({
 		name: req.body.name,
-		tel: req.body.tel,
-		description: req.body.description,
+		tel: req.body.telephone,
+		title: req.body.title,
 		images: req.body.images
 	});
 

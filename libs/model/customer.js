@@ -23,8 +23,8 @@ var customerSchema = new Schema({
 	company: String,
 	description: String,
 	images: [Images],
-	onset: { type: Date, required: true},
-	conclude: {type: Date, required: true},
+	onset: { type: Date.now},
+	conclude: {type: Date.now},
 	inviteurl: String
 });
 
