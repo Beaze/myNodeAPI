@@ -19,7 +19,21 @@ var options = {
 }
 
 // var server = https.createServer(options, app);
-var server =  https.createServer(options, app).listen(app.get('port'), function() {
+var httpsServer =  https.createServer(options, app).listen(app.get('port'), function() {
   debug('Express server listening on port ' + app.get('port'));
   log.info('Express server listening on port ' + app.get('port'));
+});
+
+//  websocket SSL/TLS instance
+var WebsocketServer = require('ws').Server;
+var wss = new WebsocketServer({
+  server: httpsServer
+});
+
+wss.on('connection', function connection(ws) {
+  ws.on('message', function incoming(message) {
+    console.log('received: %s', message);
+  });
+
+  ws.send('wss was success');
 });
