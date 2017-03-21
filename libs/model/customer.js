@@ -18,8 +18,8 @@ var customerSchema = new Schema({
 	name: { type: String, required: true},
 	tel: { type: String, required: true},
 	type: { type: String, enum: ctype},
-	title: { type:String, required: true},
-	responder: { type: String, required: true },//被访者
+	title: { type: String, required: true},
+	responder: String,//被访者
 	company: String,
 	description: String,
 	images: [Images],
