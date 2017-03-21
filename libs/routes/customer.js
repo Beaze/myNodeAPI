@@ -31,7 +31,7 @@ router.post('/', function(req, res) {
 		name: req.body.name,
 		tel: req.body.telephone,
 		title: req.body.title,
-		images: req.body.images
+		company: req.body.company
 	});
 
 	Customer.save(function (err) {
@@ -100,10 +100,10 @@ router.put('/:id', function (req, res){
 			});
 		}
 
+		Customer.name = req.body.name;
 		Customer.title = req.body.title;
-		Customer.description = req.body.description;
-		Customer.author = req.body.author;
-		Customer.images = req.body.images;
+		Customer.tel = req.body.telephone;
+		Customer.company = req.body.company;
 
 		Customer.save(function (err) {
 			if (!err) {
