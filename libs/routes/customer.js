@@ -37,6 +37,7 @@ router.post('/', function(req, res) {
 	Customer.save(function (err) {
 		if (!err) {
 			log.info("New Customer created with id: %s", Customer.id);
+			console.log('New cusomer created : %s', Customer.id);
 			return res.json({
 				status: 'OK',
 				Customer:Customer
