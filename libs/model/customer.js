@@ -28,8 +28,9 @@ var customerSchema = new Schema({
 	inviteurl: String
 });
 
-customerSchema.path('title').validate(function (v) {
-	return v.length > 0 && v.length < 70;
-});
+//	判断字符长度
+// customerSchema.path('title').validate(function (v) {
+// 	return v.length > 0 && v.length < 70;
+// });
 
 module.exports = mongoose.model('Customer', customerSchema);
