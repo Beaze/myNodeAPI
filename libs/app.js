@@ -50,4 +50,6 @@ app.use(function(err, req, res, next){
     return;
 });
 
+app.use(express.static('../gate.jpg'));
+
 module.exports = app;
