@@ -37,26 +37,28 @@ wss.on('connection', function connection(ws) {
           convert.Decode(message, './gate.jpg');
 
       } else if (message == 'opendoor'){
-                ws.send('1');
+          ws.broadcast.emit('1');
 
-          wss.broadcast = function broadcast(s, ws) {
-
-                    // console.log(ws);
-              // debugger;
-                wss.clients.forEach(function each(client) {
-                  // if (typeof client.user != "undefined") {
-                  if(s == 1){
-                      client.send(ws.name + ":" + ws.msg);
-                  }
-                  if(s == 0){
-                      client.send(ws + "退出聊天室");
-                  }
-                  // }
-              });
-          };
+      } else {
+          ws.send('door is stand by');
       }
 
-});
+  });
 
   ws.send('wss was success');
 });
+
+// wss.broadcast = function broadcast(s, ws) {
+//     // console.log(ws);
+//     // debugger;
+//     wss.clients.forEach(function each(client) {
+//         // if (typeof client.user != "undefined") {
+//         if(s == 1){
+//             client.send(ws.name + ":" + ws.msg);
+//         }
+//         if(s == 0){
+//             client.send(ws + "退出聊天室");
+//         }
+//         // }
+//     });
+// };
