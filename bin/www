@@ -46,16 +46,11 @@ wss.on('connection', function connection(ws) {
           convert.Decode(message, './gate.jpg');
 
       } else if (message == 'opendoor'){
-          wss.client.forEach(function each(client) {
-              if (client && client.readyState === WebSocket.OPEN) {
-                  client.send('1');
-              } else {
-                  client.send('opendoor failed');
-              }
-          });
+          wss.broadcast('1');
 
       } else {
           ws.send('door is stand by');
+          
       }
 
   });
