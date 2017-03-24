@@ -6,7 +6,7 @@ var config = require(libs + 'config');
 var log = require(libs + 'log')(module);
 var app = require(libs + 'app');
 
-var io =
+var convert = require('../libs/utils/convert');//   convert from base64 to image
 
 app.set('port', process.env.PORT || config.get('port') || 3000);
 
@@ -33,7 +33,14 @@ var wss = new WebsocketServer({
 wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
     console.log('received: %s', message);
-  });
+      if (msg.length > 20) {
+          convert.Decode(msg, './gate.jpg');
+
+      } else if (msg == 'opendoor'){
+                ws.send('on1');
+      }
+
+});
 
   ws.send('wss was success');
 });
