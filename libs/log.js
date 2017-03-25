@@ -7,7 +7,7 @@ function logger(module) {
     return new winston.Logger({
         transports : [
             new winston.transports.File({
-                level: 'info',
+                level: 'debug',
                 filename: process.cwd() + '/logs/all.log',
                 handleException: true,
                 json: true,

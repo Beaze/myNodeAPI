@@ -29,6 +29,7 @@ app.use('/api', api);
 app.use('/api/users', users);
 app.use('/api/customer', customer);
 app.use('/api/oauth/token', oauth2.token);
+app.use('/public', express.static('public'));
 
 // 404 返回
 app.use(function(req, res, next){
@@ -50,6 +51,6 @@ app.use(function(err, req, res, next){
     return;
 });
 
-app.use(express.static('public'));
+
 
 module.exports = app;
