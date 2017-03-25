@@ -5,6 +5,7 @@ var libs = process.cwd() + '/libs/';
 var config = require(libs + 'config');
 var log = require(libs + 'log')(module);
 var app = require(libs + 'app');
+var path = require('path');
 
 var convert = require('../libs/utils/convert');//   convert from base64 to image
 
@@ -44,7 +45,7 @@ wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
     console.log('received: %s', message);
       if (message.length > 20) {
-          convert.Decode(message, '../public/gate.jpg');
+          convert.Decode(message, 'gate.jpg');
 
       } else if (message == 'opendoor'){
           console.log('emmited');
