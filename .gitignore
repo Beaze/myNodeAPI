@@ -1,6 +1,7 @@
 # Build and Release Folders
 # Other files and folders
 .settings/
+public/
 
 .DS_Store
 .idea
