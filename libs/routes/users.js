@@ -32,9 +32,10 @@ router.post('/info', function(req, res) {
         	name: req.user.username
         });
     */
-    encryptedData = req.data.encryptedData;
-    iv = res.data.iv;
-    wxcode = res.data.wxcode;
+
+    encryptedData = req.body.encryptedData;
+    iv = req.body.iv;
+    wxcode = req.body.wxcode;
 
     https.get('https://api.weixin.qq.com/sns/jscode2session?'
         +'appid=' + appId
@@ -47,13 +48,24 @@ router.post('/info', function(req, res) {
 
         res.on('data', function(d) {
             // process.stdout.write(d);
-            console.log(data)
+            console.log('%j', d);
+            sessionkey = d.session_key;
         });
-
-
     }).on('error', function(e){
         console.error(e);
     });
+
+    if (sessionkey!=0) {
+        var decocder = wxDataDecoder(appId, sessionkey);
+        var data = decocder.decryptData(encryptedData, iv);
+        res.json(data);
+        console.log(data);
+    } else {
+        res.json({
+            error: 'Server error'
+        })
+
+    }
 
 });
 
