@@ -25,38 +25,34 @@ var encryptedData, sessionkey, iv, wxcode;
 // );
 
 router.post('/info', function(req, res) {
-        //this example simply returns the scope in the response.
-    /*
-        res.json({
-        	user_id: req.user.userId,
-        	name: req.user.username
-        });
-    */
+    //this example simply returns the scope in the response.
 
     encryptedData = req.body.encryptedData;
     iv = req.body.iv;
     wxcode = req.body.wxcode;
 
+    console.log('reqbody', req.body);
+
     https.get('https://api.weixin.qq.com/sns/jscode2session?'
-        +'appid=' + appId
-        +'&secret=' + wxsecret
-        +'&js_code=' + wxcode
+        +'appid='+ appId
+        +'&secret='+ wxsecret
+        +'&js_code='+ wxcode
         +'&grant_type=authorization_code', function(res) {
 
         console.log('状态码：', res.statusCode);
         console.log('请求头：', res.headers);
+        console.log('返回是', res.sesion_key);
 
-        res.on('data', function(d) {
-            // process.stdout.write(d);
-            console.log('%j', d);
+        res.on('body', function(d) {
             sessionkey = d.session_key;
+            console.log('Sessionkey: ', d);
         });
     }).on('error', function(e){
         console.error(e);
     });
 
     if (sessionkey!=0) {
-        var decocder = wxDataDecoder(appId, sessionkey);
+        var decocder = new wxDataDecoder(appId, sessionkey);
         var data = decocder.decryptData(encryptedData, iv);
         res.json(data);
         console.log(data);
