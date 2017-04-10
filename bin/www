@@ -21,14 +21,14 @@ var options = {
 
 // var server = https.createServer(options, app);
 var httpsServer =  https.createServer(options, app).listen(app.get('port'), function() {
-  debug('Express server listening on port ' + app.get('port'));
-  log.info('Express server listening on port ' + app.get('port'));
+    debug('Express server listening on port ' + app.get('port'));
+    log.info('Express server listening on port ' + app.get('port'));
 });
 
 //  websocket SSL/TLS instance
 var WebsocketServer = require('ws').Server;
 var wss = new WebsocketServer({
-  server: httpsServer
+    server: httpsServer
 });
 
 //  broadcast
@@ -41,23 +41,75 @@ function broadcastSend(data) {
     });
 };
 
+//  json judge
+var isJson = function(obj){
+    var isjson = typeof(obj) == "object" && Object.prototype.toString.call(obj).toLowerCase() == "[object object]" && !obj.length;
+    return isjson;
+}
+
+var pingRes = {
+    method : "pong"
+}
+
+var openDoor = {
+    method:"gate_command",
+    frcid:"00001",
+    cmd:"open"
+}
 wss.on('connection', function connection(ws) {
-  ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-      if (message.length > 20) {
-          convert.Decode(message, 'public/gate.jpg');
+    ws.send('wss was success');
+    ws.on('message', function incoming(message) {
+        console.log('received: %s', message);
 
-      } else if (message == 'opendoor'){
-          console.log('emmited');
-          broadcastSend('1');
+        if (!isJson(message)) {
 
-      } else {
-          ws.send('door is stand by');
+            if (message.length > 20) {
+                convert.Decode(message, 'public/gate.jpg');
 
-      }
+            }  else {
+                ws.send('door is stand by');
 
-  });
+            }
+        } else {
+            var jmsg = JSON.parse(message);
+            switch (jmsg.method){
+                case 'hello': {
+                    ws.send(pingRes);
+                    break;
+                }
+                case 'ping': {
+                    ws.send(pingRes);
+                    break;
+                }
 
-  ws.send('wss was success');
+                case 'find_success': {
+                    break;
+                }
+
+                case 'gete_command': {
+                    if (jmsg.cmd === 'open'){
+                        broadcastSend('1');
+                        console.log('doorOpened');
+                    } else {
+                        ws.send('command get');
+                    }
+                    break;
+                }
+
+                case 'put_image' : {
+                    if (message.length > 20) {
+                        convert.Decode(message, 'public/gate.jpg');
+                    }
+                    break;
+                }
+
+                default :
+                    ws.send('unknown message');
+                    break;
+            }
+        }
+
+    });
+
 });
 
