@@ -33,11 +33,8 @@ router.post('/info', function(req, res) {
 
     console.log('reqbody', req.body);
 
-    https.get('https://api.weixin.qq.com/sns/jscode2session?'
-        +'appid='+ appId
-        +'&secret='+ wxsecret
-        +'&js_code='+ wxcode
-        +'&grant_type=authorization_code', function(res) {
+    var urlstr = String('https://api.weixin.qq.com/sns/jscode2session?'+'appid='+ appId+'&secret='+wxsecret+'&js_code='+wxcode+'&grant_type=authorization_code')
+    https.get(urlstr, function(res) {
 
         console.log('状态码：', res.statusCode);
         console.log('请求头：', res.headers);
@@ -51,7 +48,7 @@ router.post('/info', function(req, res) {
         console.error(e);
     });
 
-    if (sessionkey!=0) {
+    if (sessionkey) {
         var decocder = new wxDataDecoder(appId, sessionkey);
         var data = decocder.decryptData(encryptedData, iv);
         res.json(data);
