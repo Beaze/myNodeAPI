@@ -2,6 +2,7 @@
 # Other files and folders
 .settings/
 public/
+node_modules/
 
 .DS_Store
 .idea
