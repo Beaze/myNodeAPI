@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 var debug = require('debug')('restapi');
+var moment = require('moment');
 
 var libs = process.cwd() + '/libs/';
 var config = require(libs + 'config');
@@ -52,50 +53,51 @@ var pingRes = {
 }
 
 var openDoor = {
-    method:"gate_command",
-    frcid:"00001",
-    cmd:"open"
+    method : "cmd_relay",
+    unionId : "532323",
+    time: moment().format("YYYYMMDDHHmmss"),
+    target: "1",
+    param: {
+        status: "on",
+        index: "1",
+        dealy: "5"
+    }
+
 }
 wss.on('connection', function connection(ws) {
     ws.send('wss was success');
     ws.on('message', function incoming(message) {
-        console.log('received: %s', message);
-
-        if (!isJson(message)) {
-
-            if (message.length > 20) {
+        console.log('received: %s,\n ----%s----', message);
+        var jmsg = JSON.parse(message);
+        if (!isJson(jmsg)) {
+            if (message.length > 100) {
                 convert.Decode(message, 'public/gate.jpg');
-
             }  else {
                 ws.send('door is stand by');
-
             }
         } else {
-            var jmsg = JSON.parse(message);
             switch (jmsg.method){
                 case 'hello': {
-                    ws.send(pingRes);
+                    ws.send(JSON.stringify(pingRes));
                     break;
                 }
                 case 'ping': {
-                    ws.send(pingRes);
+                    ws.send(JSON.stringify(pingRes));
                     break;
                 }
 
+                /** 查找成功 **/
                 case 'find_success': {
                     break;
                 }
 
-                case 'gete_command': {
-                    if (jmsg.cmd === 'open'){
-                        broadcastSend('1');
-                        console.log('doorOpened');
-                    } else {
-                        ws.send('command get');
-                    }
+                /** 开门命令 **/
+                case 'gate_command': {
+                    broadcastSend(JSON.stringify(openDoor));
                     break;
                 }
 
+                /** 上传图片 **/
                 case 'put_image' : {
                     if (message.length > 20) {
                         convert.Decode(message, 'public/gate.jpg');
@@ -103,8 +105,7 @@ wss.on('connection', function connection(ws) {
                     break;
                 }
 
-                default :
-                    ws.send('unknown message');
+                default:
                     break;
             }
         }
