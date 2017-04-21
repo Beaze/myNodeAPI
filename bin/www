@@ -9,6 +9,7 @@ var app = require(libs + 'app');
 var path = require('path');
 
 var convert = require('../libs/utils/convert');//   convert from base64 to image
+var clientList = [];
 
 app.set('port', process.env.PORT || config.get('port') || 3000);
 
@@ -48,10 +49,12 @@ var isJson = function(obj){
     return isjson;
 }
 
+//  心跳
 var pingRes = {
     method : "pong"
 }
 
+//  开门
 var openDoor = {
     method : "cmd_relay",
     unionId : "532323",
@@ -62,55 +65,112 @@ var openDoor = {
         index: "1",
         dealy: "5"
     }
-
 }
+
+//  查询
+var personFind = {
+    method : "person_find_by_unionId",
+    unionId : "53234323",
+    time : moment().format("YYYYMMDDHHmmss"),
+    param: {
+        unionId : "63234323"
+    }
+}
+
+//  新增
+var personSave = {
+    method : "person_save",
+    unionId : "532323",
+    time : moment().format("YYYYMMDDHHmmss"),
+    param: {
+        name : "Yuan",
+        idNo : "522132199909090999",
+        title : "dev",
+        mobile : "13888888888",
+        comapny : "kaytion",
+        face : "1",
+        imgType : "jpg",
+        validBegin : moment().format("YYYYMMDDHHmmss"),
+        validEnd : moment().add(3, 'hours').format("YYYYMMDDHHmmss")
+    }
+}
+
+//  绑定
+var personBind = {
+    method : "person_blind",
+    unionId : "532323",
+    time : moment().format("YYYYMMDDHHmmss"),
+    param: {
+        tdc : " "
+    }
+}
+
 wss.on('connection', function connection(ws) {
-    ws.send('wss was success');
+    clientList.push(ws);
+    console.log('++++++++++当+++++前+++++有+++++[%s]+++++个+++++连+++++接+++++++++++', clientList.length)
     ws.on('message', function incoming(message) {
-        console.log('received: %s,\n ----%s----', message);
-        var jmsg = JSON.parse(message);
-        if (!isJson(jmsg)) {
-            if (message.length > 100) {
-                convert.Decode(message, 'public/gate.jpg');
-            }  else {
-                ws.send('door is stand by');
-            }
+        console.log('received: %s,\n ----message----', message);
+
+        if (1000 < message.length) {
+            convert.Decode(message, 'public/gate.jpg');
         } else {
-            switch (jmsg.method){
-                case 'hello': {
-                    ws.send(JSON.stringify(pingRes));
-                    break;
-                }
-                case 'ping': {
-                    ws.send(JSON.stringify(pingRes));
-                    break;
-                }
-
-                /** 查找成功 **/
-                case 'find_success': {
-                    break;
-                }
-
-                /** 开门命令 **/
-                case 'gate_command': {
-                    broadcastSend(JSON.stringify(openDoor));
-                    break;
-                }
-
-                /** 上传图片 **/
-                case 'put_image' : {
-                    if (message.length > 20) {
-                        convert.Decode(message, 'public/gate.jpg');
+            if (message.charAt(0) == '{') {
+                var jmsg = JSON.parse(message);
+                switch (jmsg.method) {
+                    case 'hello': {
+                        ws.send(JSON.stringify(pingRes));
+                        break;
                     }
-                    break;
-                }
+                    case 'ping': {
+                        ws.send(JSON.stringify(pingRes));
+                        break;
+                    }
 
-                default:
-                    break;
+                    /** 请求已授权人员 **/
+                    case 'person_find': {
+                        broadcastSend(JSON.stringify(personFind));
+                        console.log('*****查询人员****');
+                        break;
+                    }
+
+                    /** 开门命令 **/
+                    case 'gate_command': {
+                        broadcastSend(JSON.stringify(openDoor));
+                        break;
+                    }
+
+                    /** 上传图片 **/
+                    case 'put_image' : {
+                        if (message.length > 20) {
+                            convert.Decode(message, 'public/gate.jpg');
+                        }
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+            } else {
+                ws.send('unknown message');
+                console.log('unknow message');
             }
         }
 
     });
+
+    ws.on('close', function () {
+        clientList.pop(ws);
+        console.log('-----------当-------前-----有-----[%s]-----个-----连-----接-----------', clientList.length);
+    })
+
+    ws.on('error', function (err) {
+        console.log('Socket error happend');
+        // ws.send(
+        //     JSON.stringify({
+        //         SocketError : err
+        //     })
+        // )
+    })
 
 });
 
